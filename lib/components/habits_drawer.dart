@@ -9,7 +9,7 @@ class HabitsDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       child: Center(
         child: CupertinoSwitch(
           value: context.watch<ThemeCubit>().isDarkMode,
