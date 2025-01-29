@@ -1,4 +1,6 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:habit_tracker_app/common/themes/app_input_decoration.dart';
 import 'package:intl/intl.dart';
 
 class DatePickerFormField extends StatefulWidget {
@@ -30,16 +32,42 @@ class _DatePickerFormFieldState extends State<DatePickerFormField> {
     super.dispose();
   }
 
+  void _showDialog(Widget child) {
+    showCupertinoModalPopup<void>(
+      context: context,
+      builder: (BuildContext context) => Container(
+        height: 216,
+        padding: const EdgeInsets.only(top: 6.0),
+        // The Bottom margin is provided to align the popup above the system
+        // navigation bar.
+        margin: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
+        ),
+        // Provide a background color for the popup.
+        color: CupertinoColors.systemBackground.resolveFrom(context),
+        // Use a SafeArea widget to avoid system overlaps.
+        child: SafeArea(
+          top: false,
+          child: child,
+        ),
+      ),
+    );
+  }
+
   _showDatePicker() async {
+    // context: context,
+    //     initialDate: dateFormater.parse(_dateController.text),
+    //     firstDate: DateTime(now.year - 1, now.month, now.day),
+    //     lastDate: now
     final now = DateTime.now();
-    final newDate = await showDatePicker(
-        context: context,
-        initialDate: dateFormater.parse(_dateController.text),
-        firstDate: DateTime(now.year - 1, now.month, now.day),
-        lastDate: now);
-    if (newDate != null) {
-      _dateController.text = dateFormater.format(newDate);
-    }
+    // final newDate =
+    _showDialog(CupertinoDatePicker(
+      initialDateTime: dateFormater.parse(_dateController.text),
+      maximumDate: now,
+      minimumDate: DateTime(now.year - 1, now.month, now.day),
+      onDateTimeChanged: (newDate) =>
+          {_dateController.text = dateFormater.format(newDate)},
+    ));
   }
 
   @override
@@ -50,11 +78,9 @@ class _DatePickerFormFieldState extends State<DatePickerFormField> {
       readOnly: true,
       controller: _dateController,
       onTap: _showDatePicker,
-      decoration: const InputDecoration(
-        border: OutlineInputBorder(),
+      decoration: const AppInputDecoration(
+        hintText: "Start Date",
         prefixIcon: Icon(Icons.date_range_outlined),
-        label: Text("Start Date"),
-        errorMaxLines: 3,
       ),
       validator: (value) {
         if (value == null || value.isEmpty || value.trim().isEmpty) {
